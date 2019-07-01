@@ -1,7 +1,7 @@
 #Filter snpEff output for valid genes. First, filter out all loci out of chromosome range. Second, print $8, the annotation field of the vcf table. Third, find the gene name, which comes after "MODIFIER".
 #!/bin/bash
 #snpEff_output=/home/peterinnes/Chickadees/snpEff_analyses/BCCH/moch_vs_bcch/fixdif_moch_bcch.snpEff_ann.vcf
-prefix=genes_fixdif_moch_bcch
+#prefix=genes_fixdif_moch_bcch
 #outdir=/home/peterinnes/Chickadees/snpEff_analyses/BCCH/moch_vs_bcch/
 
 #must be run in the directory with snpEff output
