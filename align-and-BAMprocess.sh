@@ -17,43 +17,34 @@ if [ $# -lt 1 ]
         Output is a fully processed BAM (sorted, rg-added, duplicate-marked, cigar-split). 
         Script is designed for running tasks in parallel on a SLURM cluster.
 
-        [-s] Path to sample sheet
-        [-r] Path to runDir
-        [-g] Path to reference genome directory
-        [-f] Path to ref genome fasta
-        [-p] Path to trimmed fastqs
-        [-o] Path to output dir for sorted/processed bam files
-        [-t] Number of threads
-        [-a] abbrev for ref genome to differentiate b/w data aligned to chickadee ref vs zebra finch ref
+        [-s] Path to sample sheet, one sample per line, no path prefix or file-type suffix. Sample name only. 
+        [-g] Path to ref genome directory (contains STAR index files as well as ref genome fasta)
+        [-f] Path to ref genome fasta.
+        [-p] Path to trimmed fastqs: single directory containing all trimmed.fastq.gz files.
+        [-o] Path to output dir for sorted/processed bam files.
+        [-t] Number of threads.
+        [-a] Abbreviation of ref genome used, in order to differentiate b/w data aligned to chickadee ref vs zebra finch ref.
         "
 
     else
-        while getopts s:g:f:r:p:o:t:a: option
+        while getopts s:g:f:p:o:t:a: option
         do
         case "${option}"
         in
         s) samplesheet=${OPTARG};;
         g) genomeDir=${OPTARG};;
         f) ref=${OPTARG};;
-        r) runDir=${OPTARG};;
         p) fastqs_path=${OPTARG};;
         o) sortedbamoutdir=${OPTARG};;
         t) threads=${OPTARG};;        
         a) refAbrv=${OPTARG};;
         esac
         done
-
+        
+        #this is code for parallelization of alignment jobs on a cluster
         sample=`sed -n "$SLURM_ARRAY_TASK_ID"p $samplesheet | awk '{print $1}'`
         fastq=`sed -n "$SLURM_ARRAY_TASK_ID"p $samplesheet | awk '{print $1}' | sed -e "s@^@$fastqs_path@" -e 's/$/.trimmed.fastq.gz/'`
-        echo $fastq
 
-        if [ -d $runDir ]; then
-            cd $runDir
-        else 
-            mkdir $runDir;
-            cd $runDir
-        fi
-        
         if [ ! -d $sortedbamoutdir ]; then
             mkdir $sortedbamoutdir
         fi
@@ -68,8 +59,8 @@ if [ $# -lt 1 ]
             --readFilesCommand gunzip -c \
             --readFilesIn $fastq \
             --outFileNamePrefix $sortedbamoutdir"$sample"_"$refAbrv"_ \
-            --outSAMtype BAM SortedByCoordinate \
-            --runThreadN 16 #$threads
+            --outSAMtype BAM SortedByCoordinate \ #output sorted BAM
+            --runThreadN $threads
 
         #Add read groups
         java -jar /opt/picard/2.6.0/picard-2.6.0.jar AddOrReplaceReadGroups \
@@ -93,4 +84,5 @@ if [ $# -lt 1 ]
         rm $sortedbamoutdir"$sample"_"$refAbrv".sorted_RGadded_dupmarked.bam
 
         gzip $sortedbamoutdir"$sample"_"$refAbrv".sorted_RGadded_dupmarked_split.bam
+        gzip $sortedbamoutdir"$sample"_"$refAbrv".sorted_RGadded_dupmarked_split.bai
 fi
