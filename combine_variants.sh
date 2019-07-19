@@ -9,7 +9,8 @@
 #SBATCH --output=/scratch/Users/pein7187/slurm_out_err/combine_variants_%a.out
 #SBATCH --error=/scratch/Users/pein7187/slurm_out_err/combine_variants_%a.err
 
-module load gatk/3.7.0
+module load gatk/3.7.0 #using GATK 3.7 because CombineVariants is not in GATK 4, and MergeVCFs can only be used to combine VCFs from the same sample.
+#however, GATK discourages merging single sample VCFs (per Sheila on GATK forum)--furthermore the final VCF resulting from this method resulted in way more missing genotype data than "joint-calling," so I did that instead; see combine_GVCFs script.
 
 #moch_bcch_vcf_list=/scratch/Users/pein7187/vcf/BCCH/moch_bcch_vcf.list
 #cach_bcch_vcf_list=/scratch/Users/pein7187/vcf/BCCH/cach_bcch_vcf.list
