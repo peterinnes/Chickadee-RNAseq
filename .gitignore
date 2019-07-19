@@ -1,2 +1,7 @@
+#ignore all job submission scripts
 *.sbatch
+*.slurm
+
 tests/
+
+old_scripts/
