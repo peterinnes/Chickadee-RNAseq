@@ -1,3 +1,5 @@
+#!/bin/bash
+
 module load picard
 module load gatk
 module load samtools
