@@ -1,6 +1,6 @@
 #ignore all job submission scripts
 *.sbatch
-*.slurm
+*.SLURM
 
 tests/
 

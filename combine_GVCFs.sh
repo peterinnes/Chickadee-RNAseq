@@ -23,56 +23,77 @@ then
     echo "
     Combines and genotypes GVCFs, then filters the results VCF table, and removes indels.
     Input is all GVCF files generated from HaplotypeCaller.
-    Output is out final, filtered VCF table which will be used for downstream a
+    Output is final, filtered VCF table which will be used for downstream a
 
     #insert arguments here
+
+    [-g] Path to directory containing GVCFs
+    [-r] Path to ref genome fasta
+    [-o] Path to output dir
+    [-p] Output VCF prefix
+
     "
 
-#echo "STARTING reference=$ref vcf_csv=$vcf_csv output_vcf_prefix=$output_vcf_prefix $0"
+else
+    while getopts g:r:o:p:
+    do
+    case "${option}"
+    in
+    g) GVCFs_path=${OPTARG};;
+    r) ref=${OPTARG};;
+    o) outputdir=${OPTARG};;
+    p) output_vcf_prefix=${OPTARG};;
+    esac
+    done
 
-vcf_args=""
-for vcf in $( cat $vcf_csv | tr ',' '\n' ); do
-
-    if [ ! -f $vcf ];then
-        echo "$vcf not found"
-        exit
-    fi
-
-    vcf_args+="--variant $vcf "
-
-done
-
-#combine gvcfs
-
-gatk CombineGVCFs -R $ref -O $outputdir"$output_vcf_prefix".joint.vcf $vcf_args
-
-
-#genotype gvcfs
-
-gatk GenotypeGVCFs -R $ref -O $outputdir"$output_vcf_prefix".vcf -V $outputdir"$output_vcf_prefix".joint.vcf
-
-
-#filter
-
-gatk VariantFiltration \
--R $ref \
--V $outputdir"$output_vcf_prefix".vcf \
---window 35 \
---cluster 3 \
---filter-name "FS" \
---filter "FS > 30.0" \
---filter-name "QD" \
---filter "QD < 2.0" \
--O $outputdir"$output_vcf_prefix"_gatkfiltered.vcf
-
-rm $outputdir"$output_vcf_prefix".joint.vcf
-rm $outputdir"$output_vcf_prefix".vcf
-
-#remove indels
-gatk SelectVariants \
--R $ref \
---variant $outputdir"$output_vcf_prefix"_gatkfiltered.vcf \
--o $outputdir"$output_vcf_prefix"_gatkfiltered_no_indels.vcf \
---selectTypeToExclude INDEL
-
-rm $outputdir"$output_vcf_prefix"_gatkfiltered.vcf
+    for vcf in $( ls $GVCFs_path\*.gvcf.gz ); do
+    
+        if [ ! -f $vcf ];then
+            echo "$vcf not found"
+            exit
+        fi
+    
+        vcf_args+="--variant $vcf "
+    
+    done
+    
+    #combine gvcfs
+    
+    gatk CombineGVCFs \
+    -R $ref \
+    -O $outputdir"$output_vcf_prefix".joint.vcf \
+    $vcf_args
+    
+    
+    #genotype gvcfs
+    
+    gatk GenotypeGVCFs \
+    -R $ref \
+    -O $outputdir"$output_vcf_prefix".vcf \
+    -V $outputdir"$output_vcf_prefix".joint.vcf
+    
+    
+    #filter
+    
+    gatk VariantFiltration \
+    -R $ref \
+    -V $outputdir"$output_vcf_prefix".vcf \
+    --window 35 \
+    --cluster 3 \
+    --filter-name "FS" \
+    --filter "FS > 30.0" \
+    --filter-name "QD" \
+    --filter "QD < 2.0" \
+    -O $outputdir"$output_vcf_prefix"_gatkfiltered.vcf
+    
+    rm $outputdir"$output_vcf_prefix".joint.vcf
+    rm $outputdir"$output_vcf_prefix".vcf
+    
+    #remove indels
+    gatk SelectVariants \
+    -R $ref \
+    --variant $outputdir"$output_vcf_prefix"_gatkfiltered.vcf \
+    -o $outputdir"$output_vcf_prefix"_gatkfiltered_no_indels.vcf \
+    --selectTypeToExclude INDEL
+    
+    rm $outputdir"$output_vcf_prefix"_gatkfiltered.vcf
