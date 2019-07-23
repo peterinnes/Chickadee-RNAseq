@@ -1,10 +1,4 @@
 #!/bin/bash
-#SBATCH -p short
-#SBATCH --job-name=fastqc_chickadees
-#SBATCH --mem=40GB
-#SBATCH --nodes=1
-#SBATCH --ntasks=16
-#SBATCH --array=1-15
 
 module load fastqc
 module load java

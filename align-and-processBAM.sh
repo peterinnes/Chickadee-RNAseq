@@ -1,4 +1,5 @@
 #!/bin/bash
+
 #SBATCH -p short
 #SBATCH --job-name=STAR2passMode_chickadee
 #SBATCH --mem=40GB

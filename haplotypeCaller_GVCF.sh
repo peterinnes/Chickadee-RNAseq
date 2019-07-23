@@ -1,23 +1,24 @@
 #!/bin/bash
+#SBATCH -p short
+#SBATCH --job-name=call_haplotypes
+#SBATCH --mem=40GB
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --array=1-3
+#SBATCH --output=/scratch/Users/pein7187/Chickadee-RNAseq/new_pipeline/slurm_out_err/joint_call_haplotypes_%a.out
+#SBATCH --error=/scratch/Users/pein7187/Chickadee-RNAseq/new_pipeline/slurm_out_err/joint_call_haplotypes_%a.err
 
 module load picard
 module load gatk
 module load samtools
 
-#old variables before I added commandline arguments
-#samplesheet=/scratch/Users/pein7187/chickadee_samplesheet.txt
-#sample=`sed -n "$SLURM_ARRAY_TASK_ID"p $samplesheet | awk '{print $1}'`
-#bam_path=/scratch/Users/pein7187/sorted_RGadded_dupmarked_split_bams/zebra_finch/
-#bam_suffix=_trimmed_tG.sorted_RGadded_dupmarked_split.bam
-#ref=/scratch/Users/pein7187/taeGut/Taeniopygia_guttata.taeGut3.2.4.dna.toplevel.fa
-#outdir=/scratch/Users/pein7187/vcf/zebra_finch/joint_calling/
-
 if [ $# -lt 1 ]
 then
     echo "
-    Calls variants with GATK HaplotypeCaller in -GVCF mode Input sorted, processed bam files.
+    Calls variants with GATK HaplotypeCaller in -GVCF mode.
+    Input sorted, processed bam files.
     Settings are per GATK recommendations for RNA-seq data.
-    Output is a VCF table. Genotyping is done in subsequent step.
+    Output is one .gvcf table per sample. Genotyping is done in subsequent step.
     Script designed to run on a SLURM cluster.
     
     [-s] Path to samplesheet, one sample per line, no path prefix or file-type suffix. Sample name only.
@@ -50,3 +51,4 @@ else
     -ERC GVCF \
     --dont-use-soft-clipped-bases \
     --standard-min-confidence-threshold-for-calling 20
+fi
