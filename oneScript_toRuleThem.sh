@@ -61,14 +61,13 @@ else
     #since we are using annotations from an older zebra finch ref
     awk '$3==1' $outputdir/moch_vs_bcch/moch_bcch.weir.fst | awk 'BEGIN {OFS="\t"};{print$1,$2}' \
     | awk 'BEGIN {OFS="\t"}NR==FNR{loci[$1$2];next}{if($1$2 in loci)print $1,$2,$3,$4,$5,$6,$7,$8}' - <(gzip -dc $VCF) \
-    | sed -e 's/^.*\(ref\)//g' -e 's/|//g' 
+    | sed -e 's/^.*\(ref\)//g' -e 's/|//g' -e '1i #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO' \ 
     > "$outputdir"moch_vs_bcch/moch_bcch_fixdif.snpEff_input.vcf
     
     #same for cach_vs_bcch
     awk '$3==1' $outputdir/cach_vs_bcch/cach_bcch.weir.fst | awk 'BEGIN {OFS="\t"};{print$1,$2}' \
     | awk 'BEGIN {OFS="\t"}NR==FNR{loci[$1$2];next}{if($1$2 in loci)print $1,$2,$3,$4,$5,$6,$7,$8}' - <(gzip -dc $VCF) \
-    | sed -e 's/^.*\(ref\)//g' -e 's/|//g' \
-    #need to use sed to add header here (CHROM, POS, etc...)
+    | sed -e 's/^.*\(ref\)//g' -e 's/|//g' -e '1i #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO' \
     > "$outputdir"cach_vs_bcch/cach_bcch_fixdif.snpEff_input.vcf
     
    
