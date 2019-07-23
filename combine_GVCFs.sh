@@ -4,13 +4,13 @@
 #SBATCH --mem=40GB
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --output=/scratch/Users/pein7187/slurm_out_err/tG_combine_GVCFs_all_%a.out
-#SBATCH --error=/scratch/Users/pein7187/slurm_out_err/tG_combine_GVCFs_all_%a.err
+#SBATCH --output=/scratch/Users/pein7187/Chickadee-RNAseq/new_pipeline/slurm_out_err/combine_GVCFs_all_%a.out
+#SBATCH --error=/scratch/Users/pein7187/Chickadee-RNAseq/new_pipeline/slurm_out_err/combine_GVCFs_all_%a.err
 
 module load gatk
 module load samtools
 
-#set -exuo pipefail
+set -exuo pipefail
 
 if [ $# -lt 1 ]
 then
@@ -27,7 +27,7 @@ then
     "
 
 else
-    while getopts g:r:o:p:
+    while getopts g:r:o:p: option
     do
     case "${option}"
     in
@@ -38,14 +38,14 @@ else
     esac
     done
 
-    for vcf in $( ls $GVCFs_path\*.gvcf.gz ); do
+    for gvcf in $( ls $GVCFs_path*.gvcf ); do
     
-        if [ ! -f $vcf ];then
-            echo "$vcf not found"
-            exit
-        fi
+        #if [ ! -f $vcf ];then
+        #    echo "$vcf not found"
+        #    exit
+        #fi
     
-        vcf_args+="--variant $vcf "
+        gvcf_args+="--variant $gvcf "
     
     done
     
@@ -54,7 +54,7 @@ else
     gatk CombineGVCFs \
     -R $ref \
     -O $outputdir"$output_vcf_prefix".joint.vcf \
-    $vcf_args
+    $gvcf_args
     
     
     #genotype gvcfs
@@ -78,15 +78,17 @@ else
     --filter "QD < 2.0" \
     -O $outputdir"$output_vcf_prefix"_gatkfiltered.vcf
     
-    rm $outputdir"$output_vcf_prefix".joint.vcf
-    rm $outputdir"$output_vcf_prefix".vcf
-    
+
     #remove indels
+
     gatk SelectVariants \
     -R $ref \
     --variant $outputdir"$output_vcf_prefix"_gatkfiltered.vcf \
     -O $outputdir"$output_vcf_prefix"_gatkfiltered_no_indels.vcf \
     --select-type-to-exclude INDEL
     
-    rm $outputdir"$output_vcf_prefix"_gatkfiltered.vcf
+    #remove intermediate files
+    #rm $outputdir"$output_vcf_prefix".joint.vcf
+    #rm $outputdir"$output_vcf_prefix".vcf
+    #rm $outputdir"$output_vcf_prefix"_gatkfiltered.vcf
 fi
