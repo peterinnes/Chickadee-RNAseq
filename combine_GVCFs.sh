@@ -87,6 +87,9 @@ else
     -O $outputdir"$output_vcf_prefix"_gatkfiltered_no_indels.vcf \
     --select-type-to-exclude INDEL
     
+    #filter missing genotypes
+    #vcftools --max-missing 0.25 --gzvcf $OUT_PREFIX.vcf.gz --recode --stdout > $OUT_PREFIX\.vcf.gz
+
     #remove intermediate files
     #rm $outputdir"$output_vcf_prefix".joint.vcf
     #rm $outputdir"$output_vcf_prefix".vcf
