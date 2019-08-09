@@ -5,8 +5,9 @@ set pipefail -exuo
 if [ $# -lt 1 ]
 then
     echo "
-    Post-VCF data processing and analysis. Takes VCF table through Fst calculations,
-    SNP annotations w/ snpEff, and characterization of number of fixed differences in candidate pathways. All analysis is done for both pairwise species comparison: black-capped vs. mountain, black-capped vs. Carolina.
+    Post-VCF data processing and SNP annotation. Takes VCF table through Fst calculations,
+    text processing for correct snpEff input format,
+    SNP annotations w/ snpEff. All analysis is done for both pairwise species comparison: black-capped vs. mountain, black-capped vs. Carolina.
     
     [-v] Full path to gzipped VCF table containing all three chickadee species
     [-e] Full path to snpEff
@@ -79,3 +80,4 @@ else
     java -jar "$snpEff"snpEff.jar -v -c "$snpEff"snpEff.config -stats cach_bcch taeGut_bcch_ann cach_bcch_fixdif_chrom_edited.snpEff_input.vcf \
     > cach_bcch_fixdif.snpEff_ann.vcf
 
+fi
