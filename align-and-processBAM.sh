@@ -4,9 +4,9 @@
 #SBATCH --job-name=STAR2passMode_chickadee
 #SBATCH --mem=40GB
 #SBATCH --nodes=1
-#SBATCH --array=1-3
-#SBATCH --output=/scratch/Users/pein7187/Chickadee-RNAseq/slurm_out_err/chickadee_STAR2passMode_%a.out
-#SBATCH --error=/scratch/Users/pein7187/Chickadee-RNAseq/slurm_out_err/chickadee_STAR2passMode_%a.err
+#SBATCH --array=1-15
+#SBATCH --output=/scratch/Users/pein7187/Chickadee-RNAseq/new_pipeline_output/slurm_out_err/chickadee_STAR2passMode_%a.out
+#SBATCH --error=/scratch/Users/pein7187/Chickadee-RNAseq/new_pipeline_output/slurm_out_err/chickadee_STAR2passMode_%a.err
 
 set -exou pipefail
 
@@ -84,6 +84,6 @@ if [ $# -lt 1 ]
             -O $sortedbamoutdir"$sample"_"$refAbrv".sorted_RGadded_dupmarked_split.bam
         rm $sortedbamoutdir"$sample"_"$refAbrv".sorted_RGadded_dupmarked.bam
 
-        gzip $sortedbamoutdir"$sample"_"$refAbrv".sorted_RGadded_dupmarked_split.bam
-        gzip $sortedbamoutdir"$sample"_"$refAbrv".sorted_RGadded_dupmarked_split.bai
+        #gzip $sortedbamoutdir"$sample"_"$refAbrv".sorted_RGadded_dupmarked_split.bam
+        #gzip $sortedbamoutdir"$sample"_"$refAbrv".sorted_RGadded_dupmarked_split.bai
 fi
