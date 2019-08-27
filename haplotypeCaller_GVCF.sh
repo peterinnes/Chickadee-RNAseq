@@ -4,7 +4,7 @@
 #SBATCH --mem=40GB
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --array=1-3
+#SBATCH --array=1-15
 #SBATCH --output=/scratch/Users/pein7187/Chickadee-RNAseq/new_pipeline/slurm_out_err/joint_call_haplotypes_%a.out
 #SBATCH --error=/scratch/Users/pein7187/Chickadee-RNAseq/new_pipeline/slurm_out_err/joint_call_haplotypes_%a.err
 
