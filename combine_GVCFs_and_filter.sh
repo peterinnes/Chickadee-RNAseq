@@ -10,12 +10,12 @@
 module load gatk
 module load samtools
 
-set -exuo pipefail
+#set -exuo pipefail
 
 if [ $# -lt 1 ]
 then
     echo "
-    Combines and genotypes GVCFs, then filters the results VCF table, and removes indels.
+    Combines and genotypes GVCFs, then filters the resulting VCF table, and removes indels.
     Input is all GVCF files generated from HaplotypeCaller.
     Output is final, filtered VCF table which will be used for downstream analyses.
 
@@ -65,33 +65,33 @@ else
     -V $outputdir"$output_vcf_prefix".joint.vcf
     
     
-    #filter
-    
-    gatk VariantFiltration \
-    -R $ref \
-    -V $outputdir"$output_vcf_prefix".vcf \
-    --window 35 \
-    --cluster 3 \
-    --filter-name "FS" \
-    --filter "FS > 30.0" \
-    --filter-name "QD" \
-    --filter "QD < 2.0" \
-    -O $outputdir"$output_vcf_prefix"_gatkfiltered.vcf
-    
+   # #filter
+   # 
+   # gatk VariantFiltration \
+   # -R $ref \
+   # -V $outputdir"$output_vcf_prefix".vcf \
+   # --window 35 \
+   # --cluster 3 \
+   # --filter-name "FS" \
+   # --filter "FS > 30.0" \
+   # --filter-name "QD" \
+   # --filter "QD < 2.0" \
+   # -O $outputdir"$output_vcf_prefix"_gatkfiltered.vcf
+   # 
 
-    #remove indels
+   # #remove indels
 
-    gatk SelectVariants \
-    -R $ref \
-    --variant $outputdir"$output_vcf_prefix"_gatkfiltered.vcf \
-    -O $outputdir"$output_vcf_prefix"_gatkfiltered_no_indels.vcf \
-    --select-type-to-exclude INDEL
-    
-    #filter missing genotypes
-    #vcftools --max-missing 0.25 --gzvcf $OUT_PREFIX.vcf.gz --recode --stdout > $OUT_PREFIX\.vcf.gz
+   # gatk SelectVariants \
+   # -R $ref \
+   # --variant $outputdir"$output_vcf_prefix"_gatkfiltered.vcf \
+   # -O $outputdir"$output_vcf_prefix"_gatkfiltered_no_indels.vcf \
+   # --select-type-to-exclude INDEL
+   # 
+   # #filter missing genotypes
+   # #vcftools --max-missing 0.25 --gzvcf $OUT_PREFIX.vcf.gz --recode --stdout > $OUT_PREFIX\.vcf.gz
 
-    #remove intermediate files
-    #rm $outputdir"$output_vcf_prefix".joint.vcf
-    #rm $outputdir"$output_vcf_prefix".vcf
-    #rm $outputdir"$output_vcf_prefix"_gatkfiltered.vcf
+   # #remove intermediate files
+   rm $outputdir"$output_vcf_prefix".joint.vcf
+   # #rm $outputdir"$output_vcf_prefix".vcf
+   # #rm $outputdir"$output_vcf_prefix"_gatkfiltered.vcf
 fi
