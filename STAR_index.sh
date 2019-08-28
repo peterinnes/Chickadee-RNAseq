@@ -2,8 +2,9 @@
 
 module load STAR
 
-genomeDir=/scratch/Users/pein7187/BCCH_RefGenome
-ref=/scratch/Users/pein7187/BCCH_RefGenome/BCCH_pseudochr_rename.fasta
-annotations=/scratch/Users/pein7187/BCCH_RefGenome/snap2.all.gtf
+genomeDir=/scratch/Users/pein7187/BCCH_RefGenome_8-28-19
+ref=/scratch/Users/pein7187/Chickadee-RNAseq/BCCH_RefGenome_8-28-19/BCCH_pseudochr_rename.fasta
+annotations=/scratch/Users/pein7187/Chickadee-RNAseq/BCCH_RefGenome_8-28-19/genes.gff
 
-STAR --runMode genomeGenerate --genomeDir $genomeDir --genomeFastaFiles $ref --sjdbGTFfile $annotations --runThreadN 32
+
+STAR --runMode genomeGenerate --genomeDir $genomeDir --genomeFastaFiles $ref --sjdbGTFfile $annotations --sjdbGTFtagExonParentTranscript Parent --runThreadN 32
